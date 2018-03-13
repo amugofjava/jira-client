@@ -19,9 +19,11 @@
 
 package net.rcarz.jiraclient;
 
+import java.util.List;
 import java.util.Map;
 
 import net.sf.json.JSON;
+import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 
 /**
@@ -80,6 +82,22 @@ public class Resolution extends Resource {
 
         return new Resolution(restclient, (JSONObject)result);
     }
+
+    public static List<Resolution> getAll(RestClient restclient) throws JiraException {
+        JSON result = null;
+
+        try {
+            result = restclient.get(getBaseUri() + "resolution");
+        } catch (Exception ex) {
+            throw new JiraException("Failed to retrieve resolutions", ex);
+        }
+
+        if (!(result instanceof JSONArray))
+            throw new JiraException("JSON payload is malformed");
+
+        return Field.getResourceArray(Resolution.class, result, restclient);
+    }
+
 
     @Override
     public String toString() {
